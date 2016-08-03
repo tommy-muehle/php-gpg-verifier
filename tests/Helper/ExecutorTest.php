@@ -84,7 +84,20 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $executor = new Executor;
+        $executor = $this
+            ->getMockBuilder(Executor::class)
+            ->setMethods(['isExist', 'isExecutable'])
+            ->getMock();
+
+        $executor
+            ->method('isExist')
+            ->willReturn(true);
+
+        $executor
+            ->method('isExecutable')
+            ->willReturn(true);
+
+        /* @var $executor Executor */
         $result = $executor->run(['--verify', '--status-fd 1', 'file.sig', 'file']);
 
         $this->assertEquals('', $result);

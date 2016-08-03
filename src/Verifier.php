@@ -20,7 +20,8 @@ class Verifier
      */
     public function __construct($executable = '/usr/bin/gpg')
     {
-        $this->verificator = new Verificator(new Executor($executable));
+        $executor = new Executor(new \SplFileInfo($executable));
+        $this->verificator = new Verificator($executor);
     }
 
     /**
@@ -29,6 +30,9 @@ class Verifier
      */
     public function verify($signatureFile, $file)
     {
-        $this->verificator->verify($signatureFile, $file);
+        $this->verificator->verify(
+            new \SplFileInfo($signatureFile),
+            new \SplFileInfo($file)
+        );
     }
 }

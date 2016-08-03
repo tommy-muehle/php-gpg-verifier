@@ -24,17 +24,14 @@ class Verificator
     }
 
     /**
-     * @param string $signature
-     * @param string $file
+     * @param \SplFileInfo $signature
+     * @param \SplFileInfo $file
      *
      * @throws FailedVerificationException
      * @throws NotExistException
      */
-    public function verify($signature, $file)
+    public function verify(\SplFileInfo $signature, \SplFileInfo $file)
     {
-        $signature = new \SplFileInfo($signature);
-        $file = new \SplFileInfo($file);
-
         if (false === $signature->isFile() || false === $file->isFile()) {
             throw new NotExistException('One given file are not exist!');
         }

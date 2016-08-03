@@ -15,11 +15,15 @@ class Executor
     private $executable;
 
     /**
-     * @param string $executable
+     * @param \SplFileInfo $executable
      */
-    public function __construct($executable = '/usr/bin/gpg')
+    public function __construct(\SplFileInfo $executable = null)
     {
-        $this->executable = new \SplFileInfo($executable);
+        if (null === $executable) {
+            $executable = new \SplFileInfo('/usr/local/bin/gpg');
+        }
+
+        $this->executable = $executable;
     }
 
     /**

@@ -31,7 +31,7 @@ class VerificatorTest extends \PHPUnit_Framework_TestCase
     public function testNotExistingFileThrowsException()
     {
         $this->setExpectedException(NotExistException::class);
-        $this->verificator->verify('file.sig', 'file');
+        $this->verificator->verify(new \SplFileInfo('file.sig'), new \SplFileInfo('file'));
     }
 
     public function testNotValidSignatureThrowsException()
@@ -57,8 +57,8 @@ EOT;
         );
 
         $this->verificator->verify(
-            __DIR__ . '/../Fixtures/box-2.7.4.phar.sig',
-            __DIR__ . '/../Fixtures/box-2.7.4.phar'
+            new \SplFileInfo(__DIR__ . '/../Fixtures/box-2.7.4.phar.sig'),
+            new \SplFileInfo(__DIR__ . '/../Fixtures/box-2.7.4.phar')
         );
     }
 
@@ -88,8 +88,8 @@ EOT;
         );
 
         $this->verificator->verify(
-            __DIR__ . '/../Fixtures/box-2.7.4.phar.sig',
-            __DIR__ . '/../Fixtures/box-2.7.4.phar'
+            new \SplFileInfo(__DIR__ . '/../Fixtures/box-2.7.4.phar.sig'),
+            new \SplFileInfo(__DIR__ . '/../Fixtures/box-2.7.4.phar')
         );
     }
 }
