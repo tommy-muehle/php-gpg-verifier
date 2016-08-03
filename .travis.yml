@@ -25,3 +25,6 @@ after_success:
   - ./bin/test-reporter
 notifications:
   email: false
+addons:
+  code_climate:
+    repo_token: 3eb6deada57b2df4ad41c232e68b5b8dd1a39e9811fc107722e0aee218555e1f
