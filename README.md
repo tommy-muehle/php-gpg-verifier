@@ -3,6 +3,8 @@
 [![Latest Stable Version](https://poser.pugx.org/tm/gpg-verifier/v/stable)](https://packagist.org/packages/tm/gpg-verifier)
 [![Total Downloads](https://poser.pugx.org/tm/gpg-verifier/downloads)](https://packagist.org/packages/tm/gpg-verifier)
 [![Build Status](https://travis-ci.org/tommy-muehle/php-gpg-verifier.svg?branch=master)](https://travis-ci.org/tommy-muehle/php-gpg-verifier)
+[![Code Climate](https://codeclimate.com/github/tommy-muehle/php-gpg-verifier/badges/gpa.svg)](https://codeclimate.com/github/tommy-muehle/php-gpg-verifier)
+[![Test Coverage](https://codeclimate.com/github/tommy-muehle/php-gpg-verifier/badges/coverage.svg)](https://codeclimate.com/github/tommy-muehle/php-gpg-verifier/coverage)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/tommy-muehle/php-gpg-verifier/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/tommy-muehle/php-gpg-verifier.svg)](https://github.com/php-gpg-verifier/issues)
