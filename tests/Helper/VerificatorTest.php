@@ -13,65 +13,78 @@ use TM\GPG\Verification\Helper\Verificator;
  */
 class VerificatorTest extends \PHPUnit_Framework_TestCase
 {
-    use PHPMock;
-
-    /**
-     * @var Verificator
-     */
-    private $verificator;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
-    {
-        $this->verificator = new Verificator(new Executor);
-    }
-
     public function testNotExistingFileThrowsException()
     {
-        $this->setExpectedException(NotExistException::class);
-        $this->verificator->verify(new \SplFileInfo('file.sig'), new \SplFileInfo('file'));
+        $this->setExpectedException(
+            NotExistException::class,
+            'One given file are not exist!'
+        );
+
+        $verificator = $this
+            ->getMockBuilder(Verificator::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['verify'])
+            ->getMock();
+
+        /* @var $verificator Verificator */
+        $verificator->verify(new \SplFileInfo('foo'), new \SplFileInfo('bar'));
     }
 
     public function testNotValidSignatureThrowsException()
     {
-        $this->setExpectedException(FailedVerificationException::class);
+        $this->setExpectedException(
+            FailedVerificationException::class
+        );
 
-        $exec = $this->getFunctionMock('TM\GPG\Verification\Helper', 'exec');
-        $exec->expects($this->once())->willReturnCallback(
-            function ($command, &$output, &$returnCode) {
-                $this->assertRegexp('/gpg \-\-verify \-\-status-fd 1/', $command);
-                $this->assertRegexp('/box\-2\.7\.4\.phar\.sig/', $command);
-                $this->assertRegexp('/box\-2\.7\.4\.phar/', $command);
+        $executor = $this
+            ->getMockBuilder(Executor::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['run'])
+            ->getMock();
 
-                $output = <<<EOT
+        $executor
+            ->method('run')
+            ->willReturn(<<<EOT
 gpg: Unterschrift vom Mi 27 Jul 15:59:10 2016 CEST mittels RSA-Schlüssel ID 41515FE8
 [GNUPG:] ERRSIG 293D771241515FE8 1 10 00 1469627950 9
 [GNUPG:] NO_PUBKEY 293D771241515FE8
 gpg: Unterschrift kann nicht geprüft werden: Öffentlicher Schlüssel nicht gefunden
-EOT;
+EOT
+            );
 
-                $returnCode = 0;
-            }
-        );
+        $signature = $this
+            ->getMockBuilder(\SplFileInfo::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isFile'])
+            ->getMock();
 
-        $this->verificator->verify(
-            new \SplFileInfo(__DIR__ . '/../Fixtures/box-2.7.4.phar.sig'),
-            new \SplFileInfo(__DIR__ . '/../Fixtures/box-2.7.4.phar')
-        );
+        $signature
+            ->method('isFile')
+            ->willReturn(true);
+
+        $file = clone $signature;
+
+        $verificator = $this
+            ->getMockBuilder(Verificator::class)
+            ->setConstructorArgs([$executor])
+            ->setMethodsExcept(['verify'])
+            ->getMock();
+
+        /* @var $verificator Verificator */
+        $verificator->verify($signature, $file);
     }
 
     public function testCanVerifyAValidSignature()
     {
-        $exec = $this->getFunctionMock('TM\GPG\Verification\Helper', 'exec');
-        $exec->expects($this->once())->willReturnCallback(
-            function ($command, &$output, &$returnCode) {
-                $this->assertRegexp('/gpg \-\-verify \-\-status-fd 1/', $command);
-                $this->assertRegexp('/box\-2\.7\.4\.phar\.sig/', $command);
-                $this->assertRegexp('/box\-2\.7\.4\.phar/', $command);
+        $executor = $this
+            ->getMockBuilder(Executor::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['run'])
+            ->getMock();
 
-                $output = <<<EOT
+        $executor
+            ->method('run')
+            ->willReturn(<<<EOT
 gpg: Unterschrift vom Mi 27 Jul 15:59:10 2016 CEST mittels RSA-Schlüssel ID 41515FE8
 [GNUPG:] SIG_ID m89rvRG+oGqzFADfSM+tHId4PJ4 2016-07-27 1469627950
 [GNUPG:] GOODSIG 293D771241515FE8 Kevin G. Herrera <kevin@herrera.io>
@@ -81,15 +94,28 @@ gpg: Korrekte Unterschrift von "Kevin G. Herrera <kevin@herrera.io>"
 gpg: WARNUNG: Dieser Schlüssel trägt keine vertrauenswürdige Signatur!
 gpg:          Es gibt keinen Hinweis, daß die Signatur wirklich dem vorgeblichen Besitzer gehört.
 Haupt-Fingerabdruck  = 32E4 B747 57B1 D652 34FC  389F 293D 7712 4151 5FE8
-EOT;
+EOT
+            );
 
-                $returnCode = 0;
-            }
-        );
+        $signature = $this
+            ->getMockBuilder(\SplFileInfo::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isFile'])
+            ->getMock();
 
-        $this->verificator->verify(
-            new \SplFileInfo(__DIR__ . '/../Fixtures/box-2.7.4.phar.sig'),
-            new \SplFileInfo(__DIR__ . '/../Fixtures/box-2.7.4.phar')
-        );
+        $signature
+            ->method('isFile')
+            ->willReturn(true);
+
+        $file = clone $signature;
+
+        $verificator = $this
+            ->getMockBuilder(Verificator::class)
+            ->setConstructorArgs([$executor])
+            ->setMethodsExcept(['verify'])
+            ->getMock();
+
+        /* @var $verificator Verificator */
+        $verificator->verify($signature, $file);
     }
 }

@@ -23,6 +23,7 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         $executor = $this
             ->getMockBuilder(Executor::class)
             ->setMethods(['canRun'])
+            ->disableOriginalConstructor()
             ->getMock();
 
         $executor
@@ -37,13 +38,18 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             ExecutableException::class,
-            'Executable not exist or not executable!'
+            'Executable not executable!'
         );
 
         $executor = $this
             ->getMockBuilder(Executor::class)
-            ->setMethods(['isExecutable'])
+            ->setMethods(['isExist', 'isExecutable'])
+            ->disableOriginalConstructor()
             ->getMock();
+
+        $executor
+            ->method('isExist')
+            ->willReturn(true);
 
         $executor
             ->method('isExecutable')
@@ -57,12 +63,13 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             ExecutableException::class,
-            'Executable not exist or not executable!'
+            'Executable not exist!'
         );
 
         $executor = $this
             ->getMockBuilder(Executor::class)
             ->setMethods(['isExist'])
+            ->disableOriginalConstructor()
             ->getMock();
 
         $executor
@@ -79,14 +86,25 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         $exec->expects($this->once())->willReturnCallback(
             function ($command, &$output, &$returnCode) {
                 $this->assertRegexp('/gpg \-\-verify \-\-status-fd 1 file.sig file/', $command);
-                $output = '';
+                $output = [];
                 $returnCode = 1;
             }
         );
 
+        $executable = $this
+            ->getMockBuilder(\SplFileInfo::class)
+            ->setMethods(['getRealPath'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $executable
+            ->method('getRealPath')
+            ->willReturn('/usr/bin/gpg');
+
         $executor = $this
             ->getMockBuilder(Executor::class)
             ->setMethods(['isExist', 'isExecutable'])
+            ->setConstructorArgs([$executable])
             ->getMock();
 
         $executor
@@ -109,12 +127,39 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         $exec->expects($this->once())->willReturnCallback(
             function ($command, &$output, &$returnCode) {
                 $this->assertRegexp('/gpg \-\-verify \-\-status-fd 1 file.sig file/', $command);
-                $output = 'GOODSIG';
+                $output = ['GOODSIG'];
                 $returnCode = 0;
             }
         );
 
-        $executor = new Executor;
+        $executable = $this
+            ->getMockBuilder(\SplFileInfo::class)
+            ->setMethods(['getRealPath'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $executable
+            ->method('getRealPath')
+            ->willReturn('/usr/bin/gpg');
+
+        $executor = $this
+            ->getMockBuilder(Executor::class)
+            ->setMethods(['isExist', 'isExecutable', 'canRun'])
+            ->setConstructorArgs([$executable])
+            ->getMock();
+
+        $executor
+            ->method('isExist')
+            ->willReturn(true);
+
+        $executor
+            ->method('isExecutable')
+            ->willReturn(true);
+
+        $executor
+            ->method('canRun')
+            ->willReturn(true);
+
         $this->assertNotNull($executor->run(['--verify', '--status-fd 1', 'file.sig', 'file']));
     }
 }

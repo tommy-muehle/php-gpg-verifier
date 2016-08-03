@@ -43,7 +43,7 @@ class Verificator
             $file->getRealPath(),
         ]);
 
-        if (false === strpos($result, 'GOODSIG')) {
+        if (false === (bool) strpos($result, 'GOODSIG')) {
             throw new FailedVerificationException;
         }
     }

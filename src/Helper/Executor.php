@@ -17,12 +17,8 @@ class Executor
     /**
      * @param \SplFileInfo $executable
      */
-    public function __construct(\SplFileInfo $executable = null)
+    public function __construct(\SplFileInfo $executable)
     {
-        if (null === $executable) {
-            $executable = new \SplFileInfo('/usr/local/bin/gpg');
-        }
-
         $this->executable = $executable;
     }
 
@@ -66,23 +62,27 @@ class Executor
             throw new ExecutableException('Function "exec" not available!');
         }
 
-        if (false === $this->isExist() || false === $this->isExecutable()) {
-            throw new ExecutableException('Executable not exist or not executable!');
+        if (false === $this->isExist()) {
+            throw new ExecutableException('Executable not exist!');
+        }
+
+        if (false === $this->isExecutable()) {
+            throw new ExecutableException('Executable not executable!');
         }
 
         $command = sprintf(
-            '%s %s',
+            '%s %s 2>&1',
             $this->executable->getRealPath(),
             implode(' ', $arguments)
         );
 
-        /* @var $output string */
+        /* @var $output array */
         @exec($command, $output, $returnCode);
 
         if (0 !== $returnCode) {
             return '';
         }
 
-        return $output;
+        return implode(PHP_EOL, $output);
     }
 }
