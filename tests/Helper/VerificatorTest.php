@@ -25,7 +25,7 @@ class VerificatorTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->verificator = new Verificator(new Executor('/usr/local/bin/gpg'));
+        $this->verificator = new Verificator(new Executor);
     }
 
     public function testNotExistingFileThrowsException()
