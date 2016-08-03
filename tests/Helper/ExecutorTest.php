@@ -13,19 +13,6 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
 {
     use PHPMock;
 
-    /**
-     * @var Executor
-     */
-    private $executor;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
-    {
-        $this->executor = new Executor('/usr/local/bin/gpg');
-    }
-
     public function testDisabledExecFunctionThrowsException()
     {
         $this->setExpectedException(
@@ -97,10 +84,10 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertEquals(
-            '',
-            $this->executor->run(['--verify', '--status-fd 1', 'file.sig', 'file'])
-        );
+        $executor = new Executor;
+        $result = $executor->run(['--verify', '--status-fd 1', 'file.sig', 'file']);
+
+        $this->assertEquals('', $result);
     }
 
     public function testCanReturnGoodSigOutput()
@@ -114,8 +101,7 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertNotNull(
-            $this->executor->run(['--verify', '--status-fd 1', 'file.sig', 'file'])
-        );
+        $executor = new Executor;
+        $this->assertNotNull($executor->run(['--verify', '--status-fd 1', 'file.sig', 'file']));
     }
 }
