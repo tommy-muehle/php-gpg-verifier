@@ -17,7 +17,7 @@ class Executor
     /**
      * @param string $executable
      */
-    public function __construct($executable = '/usr/bin/gpg')
+    public function __construct($executable = 'gpg')
     {
         $this->executable = new \SplFileInfo($executable);
     }

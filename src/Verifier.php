@@ -18,7 +18,7 @@ class Verifier
     /**
      * @param string $executable
      */
-    public function __construct($executable = '/usr/bin/gpg')
+    public function __construct($executable = 'gpg')
     {
         $this->verificator = new Verificator(new Executor($executable));
     }
