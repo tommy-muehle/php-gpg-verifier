@@ -5,6 +5,7 @@ namespace TM\GPG\Verification\Tests\Helper;
 use phpmock\phpunit\PHPMock;
 use TM\GPG\Verification\Exception\ExecutableException;
 use TM\GPG\Verification\Helper\Executor;
+use TM\GPG\Verification\Model\Executable;
 
 /**
  * @package TM\GPG\Verification\Tests\Helper
@@ -41,21 +42,22 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             'Executable not executable!'
         );
 
-        $executor = $this
-            ->getMockBuilder(Executor::class)
+        $executable = $this
+            ->getMockBuilder(Executable::class)
             ->setMethods(['isExist', 'isExecutable'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $executor
+        $executable
             ->method('isExist')
             ->willReturn(true);
 
-        $executor
+        $executable
             ->method('isExecutable')
             ->willReturn(false);
 
-        /* @var $executor Executor */
+        /* @var $executable Executable */
+        $executor = new Executor($executable);
         $executor->run(['--verify', '--status-fd 1', 'file.sig', 'file']);
     }
 
@@ -66,17 +68,18 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             'Executable not exist!'
         );
 
-        $executor = $this
-            ->getMockBuilder(Executor::class)
+        $executable = $this
+            ->getMockBuilder(Executable::class)
             ->setMethods(['isExist'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $executor
+        $executable
             ->method('isExist')
             ->willReturn(false);
 
-        /* @var $executor Executor */
+        /* @var $executable Executable */
+        $executor = new Executor($executable);
         $executor->run(['--verify', '--status-fd 1', 'file.sig', 'file']);
     }
 
@@ -92,8 +95,8 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         );
 
         $executable = $this
-            ->getMockBuilder(\SplFileInfo::class)
-            ->setMethods(['getRealPath'])
+            ->getMockBuilder(Executable::class)
+            ->setMethods(['getRealPath', 'isExist', 'isExecutable'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -101,21 +104,16 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             ->method('getRealPath')
             ->willReturn('/usr/bin/gpg');
 
-        $executor = $this
-            ->getMockBuilder(Executor::class)
-            ->setMethods(['isExist', 'isExecutable'])
-            ->setConstructorArgs([$executable])
-            ->getMock();
-
-        $executor
+        $executable
             ->method('isExist')
             ->willReturn(true);
 
-        $executor
+        $executable
             ->method('isExecutable')
             ->willReturn(true);
 
-        /* @var $executor Executor */
+        /* @var $executable Executable */
+        $executor = new Executor($executable);
         $result = $executor->run(['--verify', '--status-fd 1', 'file.sig', 'file']);
 
         $this->assertEquals('', $result);
@@ -133,8 +131,8 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
         );
 
         $executable = $this
-            ->getMockBuilder(\SplFileInfo::class)
-            ->setMethods(['getRealPath'])
+            ->getMockBuilder(Executable::class)
+            ->setMethods(['getRealPath', 'isExist', 'isExecutable'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -142,19 +140,19 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
             ->method('getRealPath')
             ->willReturn('/usr/bin/gpg');
 
-        $executor = $this
-            ->getMockBuilder(Executor::class)
-            ->setMethods(['isExist', 'isExecutable', 'canRun'])
-            ->setConstructorArgs([$executable])
-            ->getMock();
-
-        $executor
+        $executable
             ->method('isExist')
             ->willReturn(true);
 
-        $executor
+        $executable
             ->method('isExecutable')
             ->willReturn(true);
+
+        $executor = $this
+            ->getMockBuilder(Executor::class)
+            ->setMethods(['canRun'])
+            ->setConstructorArgs([$executable])
+            ->getMock();
 
         $executor
             ->method('canRun')
