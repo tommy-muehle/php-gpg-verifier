@@ -53,6 +53,10 @@ try {
 
 ```
 
+## Changelog
+
+See [here](CHANGELOG.md) the full changelog.
+
 ## Contributing
 
 Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to contribute.
