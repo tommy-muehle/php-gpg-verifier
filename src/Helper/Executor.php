@@ -3,6 +3,7 @@
 namespace TM\GPG\Verification\Helper;
 
 use TM\GPG\Verification\Exception\ExecutableException;
+use TM\GPG\Verification\Model\Executable;
 
 /**
  * @package TM\GPG\Verification\Helper
@@ -10,36 +11,16 @@ use TM\GPG\Verification\Exception\ExecutableException;
 class Executor
 {
     /**
-     * @var \SplFileInfo
+     * @var Executable
      */
     private $executable;
 
     /**
-     * @param \SplFileInfo $executable
+     * @param Executable $executable
      */
-    public function __construct(\SplFileInfo $executable)
+    public function __construct(Executable $executable)
     {
         $this->executable = $executable;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExist()
-    {
-        if (true === $this->executable->isFile() || true === $this->executable->isLink()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExecutable()
-    {
-        return $this->executable->isExecutable();
     }
 
     /**
@@ -62,11 +43,11 @@ class Executor
             throw new ExecutableException('Function "exec" not available!');
         }
 
-        if (false === $this->isExist()) {
+        if (false === $this->executable->isExist()) {
             throw new ExecutableException('Executable not exist!');
         }
 
-        if (false === $this->isExecutable()) {
+        if (false === $this->executable->isExecutable()) {
             throw new ExecutableException('Executable not executable!');
         }
 

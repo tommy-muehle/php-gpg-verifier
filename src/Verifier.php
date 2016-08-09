@@ -2,8 +2,11 @@
 
 namespace TM\GPG\Verification;
 
+use TM\GPG\Verification\Utility\ExecutableFinder;
 use TM\GPG\Verification\Helper\Executor;
 use TM\GPG\Verification\Helper\Verificator;
+use TM\GPG\Verification\Model\Executable;
+use TM\GPG\Verification\Model\File;
 
 /**
  * @package TM\GPG\Verification
@@ -11,17 +14,24 @@ use TM\GPG\Verification\Helper\Verificator;
 class Verifier
 {
     /**
-     * @var Verificator
+     * @var Executor
      */
-    private $verificator;
+    private $executor;
 
     /**
      * @param string $executable
      */
-    public function __construct($executable = '/usr/bin/gpg')
+    public function __construct($executable = null)
     {
-        $executor = new Executor(new \SplFileInfo($executable));
-        $this->verificator = new Verificator($executor);
+        if (true === is_string($executable)) {
+            $executable = new Executable($executable);
+        }
+
+        if (!$executable instanceof Executable) {
+            $executable = ExecutableFinder::find();
+        }
+
+        $this->executor = new Executor($executable);
     }
 
     /**
@@ -30,9 +40,7 @@ class Verifier
      */
     public function verify($signatureFile, $file)
     {
-        $this->verificator->verify(
-            new \SplFileInfo($signatureFile),
-            new \SplFileInfo($file)
-        );
+        $verificator = new Verificator($this->executor);
+        $verificator->verify(new File($signatureFile), new File($file));
     }
 }
