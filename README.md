@@ -14,7 +14,7 @@ Look at the [documentation](https://www.gnupg.org/gph/en/manual/x135.html) for m
 
 ## Requirements
 
-Except PHP and composer you need an accessible [GPG](https://www.gnupg.org) binary.
+Except PHP and composer you need an accessible [GPG](https://www.gnupg.org) binary in your $PATH variable.
 
 ## Install
 
