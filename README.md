@@ -9,6 +9,8 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/tommy-muehle/php-gpg-verifier/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/tommy-muehle/php-gpg-verifier.svg)](https://github.com/php-gpg-verifier/issues)
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 Simple library to verify a file with gpg signature. 
 Look at the [documentation](https://www.gnupg.org/gph/en/manual/x135.html) for more information.
 
